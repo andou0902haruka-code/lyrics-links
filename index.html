@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>歌詞和訳リンク集</title>
+<style>
+  :root {
+    --bg: #fdfaf6;
+    --card-bg: #ffffff;
+    --text: #2b2620;
+    --sub: #7a7266;
+    --accent: #d98c3f;
+    --accent-dark: #b96f24;
+    --border: #ece4d8;
+    --tag-bg: #f4ead9;
+    --tag-text: #8a5a1f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1a17;
+      --card-bg: #26231f;
+      --text: #f0ebe2;
+      --sub: #b3a999;
+      --accent: #e6a15c;
+      --accent-dark: #f0b978;
+      --border: #3a352c;
+      --tag-bg: #3a2e1e;
+      --tag-text: #e6b370;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1a17; --card-bg: #26231f; --text: #f0ebe2; --sub: #b3a999;
+    --accent: #e6a15c; --accent-dark: #f0b978; --border: #3a352c;
+    --tag-bg: #3a2e1e; --tag-text: #e6b370;
+  }
+  :root[data-theme="light"] {
+    --bg: #fdfaf6; --card-bg: #ffffff; --text: #2b2620; --sub: #7a7266;
+    --accent: #d98c3f; --accent-dark: #b96f24; --border: #ece4d8;
+    --tag-bg: #f4ead9; --tag-text: #8a5a1f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px 16px 60px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .subtitle { color: var(--sub); font-size: 0.85rem; }
+  .controls {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px; position: sticky; top: 0;
+    background: var(--bg); padding: 10px 0; z-index: 10;
+  }
+  #searchBox {
+    width: 100%; padding: 12px 14px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--card-bg);
+    color: var(--text); font-size: 1rem;
+  }
+  #searchBox:focus { outline: 2px solid var(--accent); }
+  .tag-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag-chip {
+    padding: 5px 12px; border-radius: 999px; font-size: 0.78rem;
+    background: var(--tag-bg); color: var(--tag-text); border: 1px solid transparent;
+    cursor: pointer; user-select: none;
+  }
+  .tag-chip.active { background: var(--accent); color: #fff; }
+  .song-list { display: flex; flex-direction: column; gap: 14px; }
+  .song-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px 18px;
+  }
+  .song-title { font-size: 1.1rem; font-weight: 700; margin: 0; }
+  .song-artist { color: var(--sub); font-size: 0.85rem; margin: 2px 0 10px; }
+  .song-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .song-tags span {
+    background: var(--tag-bg); color: var(--tag-text);
+    font-size: 0.72rem; padding: 3px 10px; border-radius: 999px;
+  }
+  .song-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .song-links a {
+    text-decoration: none; font-size: 0.85rem; padding: 7px 14px;
+    border-radius: 10px; border: 1px solid var(--accent); color: var(--accent-dark);
+  }
+  .song-links a:hover { background: var(--tag-bg); }
+  .song-memo {
+    font-size: 0.85rem; color: var(--text); background: var(--bg);
+    border-radius: 10px; padding: 8px 12px; white-space: pre-wrap;
+    border: 1px dashed var(--border);
+  }
+  .song-memo:empty { display: none; }
+  .empty-state { text-align: center; color: var(--sub); padding: 40px 0; }
+  .count { text-align: center; color: var(--sub); font-size: 0.78rem; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎵 歌詞和訳リンク集</h1>
+    <div class="subtitle">洋楽の歌詞和訳サイトをまとめて、自分用メモも添えて学習するノート</div>
+  </header>
+
+  <div class="controls">
+    <input type="text" id="searchBox" placeholder="曲名・アーティスト・タグで検索…">
+    <div class="tag-filters" id="tagFilters"></div>
+  </div>
+
+  <div class="count" id="countLabel"></div>
+  <div class="song-list" id="songList"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">該当する曲がありません</div>
+</div>
+
+<script>
+const SONGS = [
+  {
+    title: "Golden Hour",
+    artist: "JVKE",
+    tags: ["Pop"],
+    translationUrl: "http://oyogetaiyakukun.blogspot.com/2022/12/golden-hour-jvke.html",
+    translationSiteName: "およげ！対訳くん",
+    youtubeUrl: "https://www.youtube.com/watch?v=PEM0Vs8jf1w",
+    memo: ""
+  }
+];
+
+const listEl = document.getElementById('songList');
+const emptyEl = document.getElementById('emptyState');
+const countEl = document.getElementById('countLabel');
+const searchBox = document.getElementById('searchBox');
+const tagFiltersEl = document.getElementById('tagFilters');
+
+let activeTag = null;
+
+function allTags() {
+  const set = new Set();
+  SONGS.forEach(s => (s.tags || []).forEach(t => set.add(t)));
+  return Array.from(set).sort();
+}
+
+function renderTagFilters() {
+  tagFiltersEl.innerHTML = '';
+  allTags().forEach(tag => {
+    const chip = document.createElement('div');
+    chip.className = 'tag-chip' + (activeTag === tag ? ' active' : '');
+    chip.textContent = tag;
+    chip.onclick = () => {
+      activeTag = activeTag === tag ? null : tag;
+      renderTagFilters();
+      renderSongs();
+    };
+    tagFiltersEl.appendChild(chip);
+  });
+}
+
+function renderSongs() {
+  const q = searchBox.value.trim().toLowerCase();
+  const filtered = SONGS.filter(s => {
+    const matchesTag = !activeTag || (s.tags || []).includes(activeTag);
+    const haystack = [s.title, s.artist, ...(s.tags || [])].join(' ').toLowerCase();
+    const matchesQuery = !q || haystack.includes(q);
+    return matchesTag && matchesQuery;
+  });
+
+  listEl.innerHTML = '';
+  countEl.textContent = `${filtered.length} / ${SONGS.length} 曲`;
+  emptyEl.style.display = filtered.length ? 'none' : 'block';
+
+  filtered.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'song-card';
+    card.innerHTML = `
+      <p class="song-title">${escapeHtml(s.title)}</p>
+      <p class="song-artist">${escapeHtml(s.artist)}</p>
+      <div class="song-tags">${(s.tags || []).map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
+      <div class="song-links">
+        ${s.translationUrl ? `<a href="${s.translationUrl}" target="_blank" rel="noopener">📖 和訳を読む${s.translationSiteName ? `（${escapeHtml(s.translationSiteName)}）` : ''}</a>` : ''}
+        ${s.youtubeUrl ? `<a href="${s.youtubeUrl}" target="_blank" rel="noopener">▶️ MV/音源</a>` : ''}
+      </div>
+      <div class="song-memo">${escapeHtml(s.memo || '')}</div>
+    `;
+    listEl.appendChild(card);
+  });
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+searchBox.addEventListener('input', renderSongs);
+renderTagFilters();
+renderSongs();
+</script>
+</body>
+</html>
