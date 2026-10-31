@@ -178,6 +178,72 @@
   .vi-empty { font-size: 0.8rem; color: var(--sub); padding: 10px 0 2px; }
   .sync-link { text-align: center; margin-top: 28px; font-size: 0.75rem; color: var(--sub); }
   .sync-link button { font: inherit; background: none; border: none; color: var(--accent-dark); text-decoration: underline; cursor: pointer; }
+
+  /* お気に入り */
+  [hidden] { display: none !important; }
+  .vi-icon.fav.on { background: var(--tag-bg); border-color: var(--accent); }
+  .view-btn.test { border-color: var(--accent); color: var(--accent-dark); }
+  .fav-song { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px 4px; }
+  .fav-song-head { font-size: 0.8rem; color: var(--sub); font-weight: 600; }
+  .fav-song .vocab-panel { border: none; background: none; padding: 0; margin: 0; }
+  .wide-btn {
+    display: block; width: 100%; font: inherit; font-size: 0.9rem; padding: 11px; cursor: pointer;
+    border-radius: 12px; border: none; background: var(--accent); color: #fff; font-weight: 700;
+  }
+  .wide-btn:disabled { opacity: 0.45; cursor: default; }
+  .wide-btn.sub { background: var(--card-bg); color: var(--accent-dark); border: 1px solid var(--accent); font-weight: 600; }
+
+  /* テスト */
+  .t-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .t-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .t-title h2 { font-size: 1.1rem; margin: 0; }
+  .t-link { font: inherit; font-size: 0.8rem; background: none; border: none; color: var(--accent-dark); text-decoration: underline; cursor: pointer; padding: 0; }
+  .t-label { font-size: 0.78rem; color: var(--sub); font-weight: 600; margin-bottom: 6px; }
+  .t-select { width: 100%; font: inherit; font-size: 0.9rem; padding: 9px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+  .t-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .t-chip {
+    font: inherit; font-size: 0.8rem; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    background: var(--bg); color: var(--text); border: 1px solid var(--border);
+  }
+  .t-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .t-chip:disabled { opacity: 0.4; cursor: default; }
+  .t-chip small { opacity: 0.8; }
+  .t-note { font-size: 0.78rem; color: var(--sub); text-align: center; }
+  .t-top { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--sub); }
+  .t-top .t-fmt { flex: 1; }
+  .t-bar { height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; }
+  .t-bar i { display: block; height: 100%; background: var(--accent); }
+  .t-q { text-align: center; padding: 10px 0 4px; }
+  .t-q-en { font-size: 1.4rem; font-weight: 700; overflow-wrap: anywhere; }
+  .t-q-ja { font-size: 1.1rem; font-weight: 700; }
+  .t-q-sub { font-size: 0.78rem; color: var(--sub); margin-top: 6px; }
+  .t-listen { font: inherit; font-size: 1rem; padding: 12px 22px; border-radius: 999px; border: 1px solid var(--accent); background: var(--tag-bg); color: var(--accent-dark); cursor: pointer; }
+  .t-choices { display: flex; flex-direction: column; gap: 8px; }
+  .t-choice {
+    font: inherit; font-size: 0.92rem; text-align: left; padding: 12px 14px; border-radius: 12px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg); color: var(--text); overflow-wrap: anywhere;
+  }
+  .t-choice.correct { border-color: #2f9a5a; background: rgba(47,154,90,.12); }
+  .t-choice.wrong { border-color: #c4533a; background: rgba(196,83,58,.12); }
+  .t-choice:disabled { cursor: default; }
+  .t-input { width: 100%; font: inherit; font-size: 1rem; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+  .t-hint { font-family: ui-monospace, Menlo, monospace; font-size: 0.95rem; letter-spacing: 1px; text-align: center; color: var(--accent-dark); }
+  .t-row { display: flex; gap: 8px; }
+  .t-row > * { flex: 1; }
+  .t-ans { border-radius: 12px; padding: 12px 14px; border: 1px solid var(--border); }
+  .t-ans.ok { border-color: #2f9a5a; }
+  .t-ans.ng { border-color: #c4533a; }
+  .t-ans-mark { font-weight: 700; margin-bottom: 6px; }
+  .t-ans.ok .t-ans-mark { color: #2f9a5a; }
+  .t-ans.ng .t-ans-mark { color: #c4533a; }
+  .t-ans .vi { border: none; padding: 0; }
+  .t-yours { font-size: 0.8rem; color: var(--sub); margin-top: 6px; overflow-wrap: anywhere; }
+  .t-song { font-size: 0.75rem; color: var(--sub); margin-top: 6px; }
+  .t-score { text-align: center; }
+  .t-score b { font-size: 2rem; }
+  .t-res { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px dashed var(--border); font-size: 0.86rem; }
+  .t-res-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .t-res-text small { color: var(--sub); }
 </style>
 </head>
 <body>
@@ -187,11 +253,14 @@
     <div class="subtitle">洋楽の歌詞和訳サイトをまとめて、自分用メモも添えて学習するノート</div>
   </header>
 
+  <div id="listView">
   <div class="controls">
-    <input type="text" id="searchBox" placeholder="曲名・アーティスト・タグで検索…">
+    <input type="text" id="searchBox" placeholder="曲名・アーティスト・タグ・表現で検索…">
     <div class="view-toggle">
       <div class="view-btn" id="btnArtist">歌手ごと</div>
       <div class="view-btn" id="btnFlat">一覧</div>
+      <div class="view-btn" id="btnFav">⭐ お気に入り</div>
+      <div class="view-btn test" id="btnTest">✍️ テスト</div>
       <div class="view-btn ghost" id="btnOpenAll">全部ひらく</div>
       <div class="view-btn ghost" id="btnCloseAll">全部とじる</div>
     </div>
@@ -201,7 +270,9 @@
   <div class="count" id="countLabel"></div>
   <div class="song-list" id="songList"></div>
   <div class="empty-state" id="emptyState" style="display:none;">該当する曲がありません</div>
-  <div class="sync-link">削除した単語・表現の端末間共有: <span id="syncLabel"></span> <button id="btnSync">合言葉を変える</button></div>
+  </div>
+  <div id="testView" hidden></div>
+  <div class="sync-link">お気に入り・削除・テストの記録の端末間共有: <span id="syncLabel"></span> <button id="btnSync">合言葉を変える</button></div>
 </div>
 
 <script>
@@ -2033,6 +2104,10 @@ const searchBox = document.getElementById('searchBox');
 const tagFiltersEl = document.getElementById('tagFilters');
 const btnArtist = document.getElementById('btnArtist');
 const btnFlat = document.getElementById('btnFlat');
+const btnFav = document.getElementById('btnFav');
+const btnTest = document.getElementById('btnTest');
+const listView = document.getElementById('listView');
+const testView = document.getElementById('testView');
 const btnOpenAll = document.getElementById('btnOpenAll');
 const btnCloseAll = document.getElementById('btnCloseAll');
 
@@ -2040,7 +2115,7 @@ const LS_VIEW = 'lyricsLinks_viewMode';
 const LS_OPEN = 'lyricsLinks_openArtists';
 
 let activeTag = null;
-let viewMode = localStorage.getItem(LS_VIEW) === 'flat' ? 'flat' : 'artist';
+let viewMode = ['flat', 'fav'].includes(localStorage.getItem(LS_VIEW)) ? localStorage.getItem(LS_VIEW) : 'artist';
 let openArtists = new Set();
 try { openArtists = new Set(JSON.parse(localStorage.getItem(LS_OPEN) || '[]')); } catch (e) {}
 
@@ -2064,6 +2139,42 @@ const shownVocab = s => allVocab(s).filter(it => !hiddenVocab.has(vocabKey(s, it
 function saveHidden() {
   try { localStorage.setItem(LS_HIDDEN, JSON.stringify(Array.from(hiddenVocab))); } catch (e) {}
   vocabSyncPush();
+}
+
+// お気に入りとテストの記録。キーは削除と同じ「曲名|歌手::英語」
+// favs: {key: {on, t}} ／ stats: {key: {ok, ng, last, lastOk}}。端末間は項目ごとに新しい方を採る
+const LS_USER = 'lyricsLinks_vocabUser';
+let U = { favs: {}, stats: {} };
+try {
+  const v = JSON.parse(localStorage.getItem(LS_USER) || '{}');
+  U.favs = v.favs || {}; U.stats = v.stats || {};
+} catch (e) {}
+let statsDirty = false;
+
+function saveUser() {
+  try { localStorage.setItem(LS_USER, JSON.stringify(U)); } catch (e) {}
+}
+const isFav = k => !!(U.favs[k] && U.favs[k].on);
+function toggleFav(k) {
+  U.favs[k] = { on: !isFav(k), t: Date.now() };
+  saveUser();
+  vocabSyncPush();
+}
+// テストの記録は毎問は送らず、30秒ごと・結果画面・画面を離れるときにまとめて送る
+function record(k, correct) {
+  const st = U.stats[k] || { ok: 0, ng: 0 };
+  if (correct) st.ok++; else st.ng++;
+  st.last = Date.now(); st.lastOk = correct;
+  U.stats[k] = st;
+  saveUser();
+  statsDirty = true;
+}
+
+// 削除していない全項目
+function vocabEntries() {
+  const out = [];
+  SONGS.forEach(s => shownVocab(s).forEach(it => out.push({ s, it, key: vocabKey(s, it) })));
+  return out;
 }
 
 // 音声は add_vocab.py が edge-tts（en-US-AndrewNeural・英単語ノートと同じ声）で作った audio_vocab/<id>.mp3。
@@ -2103,38 +2214,56 @@ function vocabButton(s) {
   return btn;
 }
 
+// 1項目（英語・種類・🔊・☆・🗑・意味・解説）。onChange は ☆/🗑 のあとの描き直し
+function vocabItemEl(s, it, { del = true, onChange = renderSongs } = {}) {
+  const el = document.createElement('div');
+  el.className = 'vi';
+  const type = TYPE_LABEL[it.type] ? it.type : 'phrase';
+  const k = vocabKey(s, it);
+  el.innerHTML = `
+    <div class="vi-head">
+      <span class="vi-en">${escapeHtml(it.en)}</span>
+      <span class="vi-type ${type}">${TYPE_LABEL[type]}</span>
+      <button class="vi-icon" title="読み上げ">🔊</button>
+      <button class="vi-icon fav${isFav(k) ? ' on' : ''}" title="お気に入り">${isFav(k) ? '⭐' : '☆'}</button>
+      ${del ? '<button class="vi-icon del" title="削除">🗑</button>' : ''}
+    </div>
+    <div class="vi-ja">${escapeHtml(it.ja)}</div>
+    ${it.note ? `<div class="vi-note">${escapeHtml(it.note)}</div>` : ''}
+  `;
+  const [btnSpeak, btnFav, btnDel] = el.querySelectorAll('button');
+  btnSpeak.onclick = () => speak(it);
+  btnFav.onclick = () => {
+    toggleFav(k);
+    btnFav.classList.toggle('on', isFav(k));
+    btnFav.textContent = isFav(k) ? '⭐' : '☆';
+    if (viewMode === 'fav' && !listView.hidden) onChange();
+    else renderViewToggle();
+  };
+  if (btnDel) btnDel.onclick = () => {
+    hiddenVocab.add(k);
+    saveHidden();
+    onChange();
+  };
+  return el;
+}
+
 function vocabPanel(s) {
   const panel = document.createElement('div');
   panel.className = 'vocab-panel';
   const items = shownVocab(s);
   if (!items.length) panel.innerHTML = '<div class="vi-empty">表示する単語・表現はありません</div>';
-  items.forEach(it => {
-    const el = document.createElement('div');
-    el.className = 'vi';
-    const type = TYPE_LABEL[it.type] ? it.type : 'phrase';
-    el.innerHTML = `
-      <div class="vi-head">
-        <span class="vi-en">${escapeHtml(it.en)}</span>
-        <span class="vi-type ${type}">${TYPE_LABEL[type]}</span>
-        <button class="vi-icon" title="読み上げ">🔊</button>
-        <button class="vi-icon del" title="削除">🗑</button>
-      </div>
-      <div class="vi-ja">${escapeHtml(it.ja)}</div>
-      ${it.note ? `<div class="vi-note">${escapeHtml(it.note)}</div>` : ''}
-    `;
-    const [btnSpeak, btnDel] = el.querySelectorAll('button');
-    btnSpeak.onclick = () => speak(it);
-    btnDel.onclick = () => {
-      hiddenVocab.add(vocabKey(s, it));
-      saveHidden();
-      renderSongs();
-    };
-    panel.appendChild(el);
-  });
+  items.forEach(it => panel.appendChild(vocabItemEl(s, it)));
   const hiddenHere = allVocab(s).filter(it => hiddenVocab.has(vocabKey(s, it)));
   const foot = document.createElement('div');
   foot.className = 'vi-foot';
-  foot.innerHTML = '<span>🔊 で読み上げ ／ 🗑 で削除</span>';
+  foot.innerHTML = '<span>🔊 読み上げ ／ ☆ お気に入り ／ 🗑 削除</span>';
+  if (items.length) {
+    const t = document.createElement('button');
+    t.textContent = '✍️ この曲でテスト';
+    t.onclick = () => showTest('song:' + songKey(s));
+    foot.appendChild(t);
+  }
   if (hiddenHere.length) {
     const back = document.createElement('button');
     back.textContent = `削除した${hiddenHere.length}件を戻す`;
@@ -2190,13 +2319,26 @@ async function initVocabSync() {
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
     ]);
     _vocabSyncDoc = doc;
-    if (snap.exists && Array.isArray(snap.data().hidden)) {
-      hiddenVocab = new Set(snap.data().hidden);
+    const data = snap.exists ? snap.data() : {};
+    if (Array.isArray(data.hidden)) {
+      hiddenVocab = new Set(data.hidden);
       try { localStorage.setItem(LS_HIDDEN, JSON.stringify(Array.from(hiddenVocab))); } catch (e) {}
-      renderSongs();
-    } else if (hiddenVocab.size) {
-      vocabSyncPush();
     }
+    // お気に入りは t、記録は last が新しい方を項目ごとに採る（丸ごと上書きしない）
+    let localNewer = !Array.isArray(data.hidden) && hiddenVocab.size > 0;
+    const mergeBy = (mine, theirs, f) => {
+      Object.entries(theirs || {}).forEach(([k, v]) => {
+        if (!mine[k] || (v[f] || 0) > (mine[k][f] || 0)) mine[k] = v;
+      });
+      Object.entries(mine).forEach(([k, v]) => {
+        if (!(theirs || {})[k] || (v[f] || 0) > (theirs[k][f] || 0)) localNewer = true;
+      });
+    };
+    mergeBy(U.favs, data.favs, 't');
+    mergeBy(U.stats, data.stats, 'last');
+    saveUser();
+    if (listView.hidden) { if (!run) renderTestSetup(); } else { renderViewToggle(); renderSongs(); }
+    if (localNewer) vocabSyncPush();
   } catch (e) {
     console.warn('単語・表現の削除の同期に失敗しました（この端末の記録だけで動きます）', e);
   }
@@ -2204,9 +2346,16 @@ async function initVocabSync() {
 
 function vocabSyncPush() {
   if (!_vocabSyncDoc) return;
-  _vocabSyncDoc.set({ hidden: Array.from(hiddenVocab), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
-    .catch(e => console.warn('削除の送信に失敗しました', e));
+  statsDirty = false;
+  _vocabSyncDoc.set({
+    hidden: Array.from(hiddenVocab), favs: U.favs, stats: U.stats,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(e => { statsDirty = true; console.warn('記録の送信に失敗しました', e); });
 }
+function flushSync() { if (statsDirty) vocabSyncPush(); }
+setInterval(flushSync, 30000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSync(); });
+window.addEventListener('pagehide', flushSync);
 
 function renderSyncLabel() {
   const id = syncId();
@@ -2214,7 +2363,7 @@ function renderSyncLabel() {
 }
 
 document.getElementById('btnSync').onclick = () => {
-  const input = prompt('他の学習サイトと同じ合言葉を入れると、削除した単語・表現がPC/スマホで共有されます。\n共有しない場合は空欄のままOK。', syncId() || '');
+  const input = prompt('他の学習サイトと同じ合言葉を入れると、お気に入り・削除・テストの記録がPC/スマホで共有されます。\n共有しない場合は空欄のままOK。', syncId() || '');
   if (input === null) return;
   try { localStorage.setItem('aien_sync_id', input.trim() || '__none__'); } catch (e) {}
   location.reload();
@@ -2244,6 +2393,8 @@ function renderTagFilters() {
 function renderViewToggle() {
   btnArtist.classList.toggle('active', viewMode === 'artist');
   btnFlat.classList.toggle('active', viewMode === 'flat');
+  btnFav.classList.toggle('active', viewMode === 'fav');
+  btnFav.textContent = `⭐ お気に入り（${vocabEntries().filter(e => isFav(e.key)).length}）`;
   const showBulk = viewMode === 'artist';
   btnOpenAll.style.display = showBulk ? '' : 'none';
   btnCloseAll.style.display = showBulk ? '' : 'none';
@@ -2322,7 +2473,42 @@ function playAllUrl(songs) {
   return ids.length >= 2 ? 'https://www.youtube.com/watch_videos?video_ids=' + ids.join(',') : '';
 }
 
+function renderFavs() {
+  const q = searchBox.value.trim().toLowerCase();
+  const favs = vocabEntries().filter(e => isFav(e.key)
+    && (!activeTag || (e.s.tags || []).includes(activeTag))
+    && (!q || [e.it.en, e.it.ja, e.s.title, e.s.artist].join(' ').toLowerCase().includes(q)));
+  countEl.textContent = `⭐ ${favs.length} 件`;
+  emptyEl.textContent = q || activeTag ? '該当するお気に入りがありません' : 'お気に入りはまだありません。曲の「📝 単語・表現」の ☆ で登録できます';
+  emptyEl.style.display = favs.length ? 'none' : 'block';
+  if (!favs.length) return;
+  const t = document.createElement('button');
+  t.className = 'wide-btn';
+  t.textContent = '✍️ お気に入りでテスト';
+  t.onclick = () => showTest('fav');
+  listEl.appendChild(t);
+  const bySong = new Map();
+  favs.forEach(e => {
+    if (!bySong.has(e.s)) bySong.set(e.s, []);
+    bySong.get(e.s).push(e);
+  });
+  bySong.forEach((list, s) => {
+    const box = document.createElement('div');
+    box.className = 'fav-song';
+    box.innerHTML = `<div class="fav-song-head">🎵 ${escapeHtml(s.title)} — ${escapeHtml(s.artist)}</div><div class="vocab-panel"></div>`;
+    const panel = box.querySelector('.vocab-panel');
+    list.forEach(e => panel.appendChild(vocabItemEl(e.s, e.it, { onChange: () => { renderViewToggle(); renderSongs(); } })));
+    listEl.appendChild(box);
+  });
+}
+
 function renderSongs() {
+  if (viewMode === 'fav') {
+    listEl.innerHTML = '';
+    listEl.classList.remove('by-artist');
+    return renderFavs();
+  }
+  emptyEl.textContent = '該当する曲がありません';
   const filtered = filteredSongs();
   const searching = searchBox.value.trim() !== '';
 
@@ -2379,11 +2565,294 @@ function escapeHtml(str) {
   return String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/* ---------- テスト（範囲・出題・形式・問題数を選ぶ。今日の復習のような予定は持たない） ---------- */
+const LS_TCFG = 'lyricsLinks_testCfg';
+const FORMATS = { meaning: '意味を選ぶ', english: '英語を選ぶ', listen: '聞いて意味を選ぶ', write: '英語を書く', mix: 'ミックス' };
+const FILTERS = { all: 'ぜんぶ', new: '🆕 未解答だけ', wrong: '❌ 前回まちがえた', few: '🔢 回数が少ない順' };
+const COUNTS = [5, 10, 20, 0];  // 0 = ぜんぶ
+let T = { scope: 'all', filter: 'all', format: 'mix', count: 10 };
+try { Object.assign(T, JSON.parse(localStorage.getItem(LS_TCFG) || '{}')); } catch (e) {}
+let run = null;  // { qs, i, results, answered, quit }
+
+function saveTCfg() {
+  try { localStorage.setItem(LS_TCFG, JSON.stringify(T)); } catch (e) {}
+}
+
+function shuffle(a) {
+  a = a.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function scopeEntries(scope) {
+  const all = vocabEntries();
+  if (scope === 'fav') return all.filter(e => isFav(e.key));
+  if (scope.startsWith('artist:')) return all.filter(e => e.s.artist === scope.slice(7));
+  if (scope.startsWith('song:')) return all.filter(e => songKey(e.s) === scope.slice(5));
+  return all;
+}
+
+const solvedCount = k => (U.stats[k] ? U.stats[k].ok + U.stats[k].ng : 0);
+
+function filterEntries(list, f) {
+  if (f === 'new') return list.filter(e => !U.stats[e.key]);
+  if (f === 'wrong') return list.filter(e => U.stats[e.key] && U.stats[e.key].lastOk === false);
+  return list;
+}
+
+function pickQuestions() {
+  let list = shuffle(filterEntries(scopeEntries(T.scope), T.filter));
+  if (T.filter === 'few') list.sort((a, b) => solvedCount(a.key) - solvedCount(b.key));  // 同じ回数どうしはランダムのまま
+  return T.count ? list.slice(0, T.count) : list;
+}
+
+function scopeOptions() {
+  const all = vocabEntries();
+  const opts = [{ v: 'all', label: `すべての曲（${all.length}）` },
+    { v: 'fav', label: `⭐ お気に入り（${all.filter(e => isFav(e.key)).length}）` }];
+  const groups = groupByArtist(SONGS.filter(s => shownVocab(s).length));
+  groups.forEach(([artist]) => opts.push({ v: 'artist:' + artist, label: `🎤 ${artist}（${scopeEntries('artist:' + artist).length}）` }));
+  const songs = groups.map(([artist, songs]) => ({ artist, songs: songs.map(s => ({ v: 'song:' + songKey(s), label: `🎵 ${s.title}（${shownVocab(s).length}）` })) }));
+  return { opts, songs };
+}
+
+function showTest(scope) {
+  if (scope) { T.scope = scope; saveTCfg(); }
+  run = null;
+  listView.hidden = true;
+  testView.hidden = false;
+  renderTestSetup();
+  window.scrollTo(0, 0);
+}
+
+function showList() {
+  flushSync();
+  run = null;
+  testView.hidden = true;
+  listView.hidden = false;
+  renderViewToggle();
+  renderSongs();
+}
+
+function renderTestSetup() {
+  const { opts, songs } = scopeOptions();
+  const values = opts.map(o => o.v).concat(...songs.map(g => g.songs.map(o => o.v)));
+  if (!values.includes(T.scope)) T.scope = 'all';
+  const base = scopeEntries(T.scope);
+  const n = { all: base.length, new: filterEntries(base, 'new').length, wrong: filterEntries(base, 'wrong').length, few: base.length };
+  const total = T.count ? Math.min(T.count, n[T.filter]) : n[T.filter];
+  const opt = o => `<option value="${escapeHtml(o.v)}"${o.v === T.scope ? ' selected' : ''}>${escapeHtml(o.label)}</option>`;
+  const chips = (k, table, fmt) => Object.keys(table).map(v =>
+    `<button class="t-chip${String(T[k]) === v ? ' active' : ''}" data-k="${k}" data-v="${v}"${fmt && fmt(v) === 0 ? ' disabled' : ''}>${table[v]}${fmt ? ` <small>${fmt(v)}</small>` : ''}</button>`).join('');
+  const countTable = Object.fromEntries(COUNTS.map(c => [String(c), c ? `${c}問` : 'ぜんぶ']));
+  const empty = { new: '未解答の問題はもうありません', wrong: '前回まちがえた問題はありません', all: 'この範囲には問題がありません', few: 'この範囲には問題がありません' };
+  testView.innerHTML = `
+    <div class="t-card">
+      <div class="t-title"><h2>✍️ 単語・表現テスト</h2><button class="t-link" id="tBack">← 一覧にもどる</button></div>
+      <div><div class="t-label">範囲</div>
+        <select class="t-select" id="tScope">${opts.map(opt).join('')}
+          ${songs.map(g => `<optgroup label="${escapeHtml(g.artist)} の曲ごと">${g.songs.map(opt).join('')}</optgroup>`).join('')}
+        </select></div>
+      <div><div class="t-label">出題</div><div class="t-chips">${chips('filter', FILTERS, v => n[v])}</div></div>
+      <div><div class="t-label">形式</div><div class="t-chips">${chips('format', FORMATS)}</div></div>
+      <div><div class="t-label">問題数</div><div class="t-chips">${chips('count', countTable)}</div></div>
+      <button class="wide-btn" id="tStart"${total ? '' : ' disabled'}>${total ? `▶ ${total}問はじめる` : empty[T.filter]}</button>
+      <div class="t-note">答えると英語が流れます。解いた結果は「未解答」「前回まちがえた」の絞り込みに使われます</div>
+    </div>`;
+  testView.querySelector('#tBack').onclick = showList;
+  testView.querySelector('#tScope').onchange = e => { T.scope = e.target.value; saveTCfg(); renderTestSetup(); };
+  testView.querySelectorAll('.t-chip').forEach(b => b.onclick = () => {
+    T[b.dataset.k] = b.dataset.k === 'count' ? Number(b.dataset.v) : b.dataset.v;
+    saveTCfg();
+    renderTestSetup();
+  });
+  testView.querySelector('#tStart').onclick = () => startRun(pickQuestions());
+}
+
+function startRun(entries) {
+  const fmts = ['meaning', 'english', 'listen', 'write'];
+  run = { qs: entries.map(e => ({ ...e, fmt: T.format === 'mix' ? fmts[Math.floor(Math.random() * fmts.length)] : T.format })), i: 0, results: [] };
+  renderQuestion();
+}
+
+// 4択の選択肢。同じ種類（単語/表現/スラング）からなるべく選ぶ
+function choicesFor(q, field) {
+  const pool = vocabEntries().filter(e => e.key !== q.key);
+  const same = shuffle(pool.filter(e => e.it.type === q.it.type));
+  const other = shuffle(pool.filter(e => e.it.type !== q.it.type));
+  const seen = new Set([q.it[field]]);
+  const picks = [];
+  for (const e of same.concat(other)) {
+    if (picks.length >= 3) break;
+    if (!seen.has(e.it[field])) { seen.add(e.it[field]); picks.push(e.it[field]); }
+  }
+  return shuffle([q.it[field], ...picks]);
+}
+
+const normAns = t => t.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9' ]+/g, ' ').replace(/\s+/g, ' ').trim();
+function writeMatches(given, en) {
+  const g = normAns(given);
+  return !!g && [en, ...en.split(' / ')].some(x => normAns(x) === g);
+}
+// ヒント: 各語の1文字目だけ見せる（bite one's tongue → b___ o__'s t_____）
+const hintOf = en => en.split(' ').map(w => w.replace(/[A-Za-z]/g, (c, i) => (i === w.search(/[A-Za-z]/) ? c : '_'))).join(' ');
+
+function renderQuestion() {
+  const q = run.qs[run.i];
+  run.answered = false;
+  const field = q.fmt === 'english' ? 'en' : 'ja';
+  let prompt;
+  if (q.fmt === 'meaning') prompt = `<div class="t-q-en">${escapeHtml(q.it.en)}</div><div class="t-q-sub">意味はどれ？</div>`;
+  else if (q.fmt === 'english') prompt = `<div class="t-q-ja">${escapeHtml(q.it.ja)}</div><div class="t-q-sub">英語はどれ？</div>`;
+  else if (q.fmt === 'listen') prompt = `<button class="t-listen" id="tListen">🔊 もう一度聞く</button><div class="t-q-sub">聞こえた表現の意味はどれ？</div>`;
+  else prompt = `<div class="t-q-ja">${escapeHtml(q.it.ja)}</div><div class="t-q-sub">英語で書くと？（${TYPE_LABEL[q.it.type] || '表現'}）</div>`;
+  const body = q.fmt === 'write'
+    ? `<input class="t-input" id="tInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="英語で入力（空欄でも答え合わせできます）">
+       <div class="t-hint" id="tHint" hidden>${escapeHtml(hintOf(q.it.en))}</div>
+       <div class="t-row"><button class="wide-btn sub" id="tHintBtn">ヒント</button><button class="wide-btn" id="tCheck">答え合わせ</button></div>`
+    : `<div class="t-choices">${choicesFor(q, field).map(c => `<button class="t-choice">${escapeHtml(c)}</button>`).join('')}</div>`;
+  testView.innerHTML = `
+    <div class="t-card">
+      <div class="t-top"><span>${run.i + 1} / ${run.qs.length}</span><span class="t-fmt">${FORMATS[q.fmt]}</span><button class="t-link" id="tQuit">✕ やめる</button></div>
+      <div class="t-bar"><i style="width:${run.i / run.qs.length * 100}%"></i></div>
+      <div class="t-q">${prompt}</div>
+      ${body}
+      <div id="tFeedback"></div>
+    </div>`;
+  testView.querySelector('#tQuit').onclick = quitRun;
+  if (q.fmt === 'listen') {
+    testView.querySelector('#tListen').onclick = () => speak(q.it);
+    speak(q.it);
+  }
+  if (q.fmt === 'write') {
+    const input = testView.querySelector('#tInput');
+    testView.querySelector('#tHintBtn').onclick = () => { testView.querySelector('#tHint').hidden = false; };
+    const check = () => {
+      if (run.answered) return;
+      if (writeMatches(input.value, q.it.en)) return answer(true, input.value);
+      revealForSelfJudge(q, input.value);
+    };
+    testView.querySelector('#tCheck').onclick = check;
+    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.isComposing) check(); });
+    input.focus();
+  } else {
+    testView.querySelectorAll('.t-choice').forEach(b => b.onclick = () => {
+      if (run.answered) return;
+      const correct = b.textContent === q.it[field];
+      testView.querySelectorAll('.t-choice').forEach(x => {
+        x.disabled = true;
+        if (x.textContent === q.it[field]) x.classList.add('correct');
+      });
+      if (!correct) b.classList.add('wrong');
+      answer(correct, b.textContent);
+    });
+  }
+}
+
+function answerBox(q, cls, mark, given) {
+  const box = document.createElement('div');
+  box.className = 't-ans ' + cls;
+  box.innerHTML = `<div class="t-ans-mark">${mark}</div>`;
+  box.appendChild(vocabItemEl(q.s, q.it, { del: false }));
+  box.insertAdjacentHTML('beforeend',
+    (given !== undefined ? `<div class="t-yours">あなたの答え: ${given.trim() ? escapeHtml(given) : '（空欄）'}</div>` : '')
+    + `<div class="t-song">🎵 ${escapeHtml(q.s.title)} — ${escapeHtml(q.s.artist)}</div>`);
+  return box;
+}
+
+// 書く形式で完全一致しなかったとき: 答えを見せて、自分で ○/× を付ける
+function revealForSelfJudge(q, given) {
+  run.answered = true;
+  testView.querySelector('#tInput').disabled = true;
+  testView.querySelector('.t-row').hidden = true;
+  const fb = testView.querySelector('#tFeedback');
+  fb.innerHTML = '';
+  fb.appendChild(answerBox(q, '', '答え（言い方の違いだけなら ○ にしてOK）', given));
+  fb.insertAdjacentHTML('beforeend', '<div class="t-row" style="margin-top:10px"><button class="wide-btn sub" id="tNg">× まちがい</button><button class="wide-btn" id="tOk">○ 合ってた</button></div>');
+  fb.querySelector('#tOk').onclick = () => { run.answered = false; answer(true, given); };
+  fb.querySelector('#tNg').onclick = () => { run.answered = false; answer(false, given); };
+  speak(q.it);
+}
+
+function answer(correct, given) {
+  if (run.answered && run.results.length > run.i) return;
+  run.answered = true;
+  const q = run.qs[run.i];
+  record(q.key, correct);
+  run.results.push({ q, correct });
+  const fb = testView.querySelector('#tFeedback');
+  fb.innerHTML = '';
+  if (q.fmt === 'write') {
+    testView.querySelector('#tInput').disabled = true;
+    const row = testView.querySelector('.t-row');
+    if (row) row.hidden = true;
+  }
+  fb.appendChild(answerBox(q, correct ? 'ok' : 'ng', correct ? '✅ 正解' : '❌ ざんねん', q.fmt === 'write' ? given : undefined));
+  const last = run.i === run.qs.length - 1;
+  fb.insertAdjacentHTML('beforeend', `<button class="wide-btn" id="tNext" style="margin-top:10px">${last ? '結果を見る' : '次へ ▶'}</button>`);
+  fb.querySelector('#tNext').onclick = () => {
+    if (last) return renderResults();
+    run.i++;
+    renderQuestion();
+    window.scrollTo(0, 0);
+  };
+  if (q.fmt !== 'write' || correct) speak(q.it);
+}
+
+function quitRun() {
+  if (!run.results.length) return renderTestSetup();
+  run.quit = true;
+  renderResults();
+}
+
+function renderResults() {
+  flushSync();
+  const res = run.results;
+  const ok = res.filter(r => r.correct).length;
+  const wrong = res.filter(r => !r.correct);
+  testView.innerHTML = `
+    <div class="t-card">
+      <div class="t-title"><h2>結果</h2><button class="t-link" id="tBack">← 一覧にもどる</button></div>
+      <div class="t-score"><b>${ok}</b> / ${res.length} 問正解${run.quit ? `<div class="t-note">途中でやめました（${res.length}問ぶんは記録ずみ）</div>` : ''}</div>
+      ${wrong.length ? `<button class="wide-btn" id="tRetry">❌ まちがえた${wrong.length}問をもう一度</button>` : ''}
+      <button class="wide-btn sub" id="tAgain">設定にもどる</button>
+      <div id="tList"></div>
+    </div>`;
+  const list = testView.querySelector('#tList');
+  res.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 't-res';
+    row.innerHTML = `<span>${r.correct ? '✅' : '❌'}</span>
+      <span class="t-res-text"><b>${escapeHtml(r.q.it.en)}</b> ${escapeHtml(r.q.it.ja)}<br><small>🎵 ${escapeHtml(r.q.s.title)}</small></span>
+      <button class="vi-icon" title="読み上げ">🔊</button>
+      <button class="vi-icon fav${isFav(r.q.key) ? ' on' : ''}" title="お気に入り">${isFav(r.q.key) ? '⭐' : '☆'}</button>`;
+    const [sp, fv] = row.querySelectorAll('button');
+    sp.onclick = () => speak(r.q.it);
+    fv.onclick = () => {
+      toggleFav(r.q.key);
+      fv.classList.toggle('on', isFav(r.q.key));
+      fv.textContent = isFav(r.q.key) ? '⭐' : '☆';
+    };
+    list.appendChild(row);
+  });
+  testView.querySelector('#tBack').onclick = showList;
+  testView.querySelector('#tAgain').onclick = () => { run = null; renderTestSetup(); };
+  const retry = testView.querySelector('#tRetry');
+  if (retry) retry.onclick = () => startRun(shuffle(wrong.map(r => r.q)));
+  window.scrollTo(0, 0);
 }
 
 btnArtist.onclick = () => setViewMode('artist');
 btnFlat.onclick = () => setViewMode('flat');
+btnFav.onclick = () => setViewMode('fav');
+btnTest.onclick = () => showTest();
 btnOpenAll.onclick = () => {
   groupByArtist(filteredSongs()).forEach(([artist]) => openArtists.add(artist));
   saveOpen();
