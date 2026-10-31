@@ -143,6 +143,41 @@
   }
   .empty-state { text-align: center; color: var(--sub); padding: 40px 0; }
   .count { text-align: center; color: var(--sub); font-size: 0.78rem; margin-bottom: 6px; }
+
+  /* この曲の単語・表現 */
+  .song-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .vocab-btn {
+    font: inherit; font-size: 0.72rem; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+    background: var(--tag-bg); color: var(--tag-text); border: 1px solid transparent;
+  }
+  .vocab-btn.on { background: var(--accent); color: #fff; }
+  .song-links .vocab-btn { font-size: 0.85rem; padding: 7px 14px; border-radius: 10px; }
+  .song-row.vocab-open { flex-wrap: wrap; }
+  .vocab-panel {
+    flex-basis: 100%; margin-top: 6px; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--bg); padding: 4px 12px 8px;
+  }
+  .song-card .vocab-panel { margin: 0 0 10px; }
+  .vi { padding: 9px 0; border-bottom: 1px dashed var(--border); }
+  .vi:last-of-type { border-bottom: none; }
+  .vi-head { display: flex; align-items: center; gap: 6px; }
+  .vi-en { font-weight: 700; font-size: 0.95rem; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .vi-type { flex: 0 0 auto; font-size: 0.66rem; padding: 2px 7px; border-radius: 999px; border: 1px solid currentColor; }
+  .vi-type.word { color: #3b7dd8; }
+  .vi-type.phrase { color: #2f9a5a; }
+  .vi-type.slang { color: #c4533a; }
+  .vi-icon {
+    flex: 0 0 auto; font: inherit; font-size: 0.8rem; width: 30px; height: 28px; cursor: pointer;
+    border-radius: 8px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text);
+  }
+  .vi-icon.del:hover { border-color: #c4533a; }
+  .vi-ja { font-size: 0.86rem; margin-top: 3px; }
+  .vi-note { font-size: 0.78rem; color: var(--sub); margin-top: 2px; }
+  .vi-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; padding-top: 8px; font-size: 0.72rem; color: var(--sub); }
+  .vi-foot button { font: inherit; font-size: 0.72rem; background: none; border: none; color: var(--accent-dark); cursor: pointer; padding: 2px 0; text-decoration: underline; }
+  .vi-empty { font-size: 0.8rem; color: var(--sub); padding: 10px 0 2px; }
+  .sync-link { text-align: center; margin-top: 28px; font-size: 0.75rem; color: var(--sub); }
+  .sync-link button { font: inherit; background: none; border: none; color: var(--accent-dark); text-decoration: underline; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -166,6 +201,7 @@
   <div class="count" id="countLabel"></div>
   <div class="song-list" id="songList"></div>
   <div class="empty-state" id="emptyState" style="display:none;">該当する曲がありません</div>
+  <div class="sync-link">削除した単語・表現の端末間共有: <span id="syncLabel"></span> <button id="btnSync">合言葉を変える</button></div>
 </div>
 
 <script>
@@ -1758,8 +1794,8 @@ const SONGS = [
     title: "CHIHIRO",
     artist: "Billie Eilish",
     tags: ["Billie Eilish"],
-    translationUrl: "https://songs-wayaku.com/billie-eilish-chihiro/",
-    translationSiteName: "歌bank",
+    translationUrl: "https://ugmkm.com/entry/2026/10/08/105241",
+    translationSiteName: "UGMKM",
     youtubeUrl: "https://www.youtube.com/watch?v=BY_XwvKogC8",
     memo: ""
   },
@@ -1783,6 +1819,213 @@ const SONGS = [
   }
 ];
 
+/* VOCAB:START */
+const LYRIC_VOCAB = {
+  "ocean eyes|Billie Eilish": [
+    {"en": "watchin' / starin'", "ja": "watching / staring の口語の発音", "note": "-ing の g を落として「ウォッチン」と言う。歌詞・会話でとても多い書き方", "type": "slang"},
+    {"en": "napalm", "ja": "ナパーム弾（焼夷弾）", "note": "燃え上がる空のイメージで、相手の目の激しさをたとえている", "type": "word"},
+    {"en": "flare", "ja": "照明弾；炎がぱっと燃え上がること", "note": "動詞なら「（怒り・炎が）燃え上がる」。flare up も同じ意味でよく使う", "type": "word"},
+    {"en": "No fair.", "ja": "ずるいよ／そんなのずるい", "note": "That's not fair. を縮めた口語。子どもっぽく拗ねたニュアンス", "type": "slang"},
+    {"en": "a world gone blind", "ja": "盲目になってしまった世界", "note": "〈名詞 + gone + 形容詞〉＝「〜になってしまった○○」。a world gone mad（狂ってしまった世界）も定番", "type": "phrase"},
+    {"en": "make friends with time", "ja": "時間と仲良くなる＝時の流れを受け入れる", "note": "make friends with ～ は「〜と友だちになる」。ここでは比喩", "type": "phrase"}
+  ],
+  "bellyache|Billie Eilish": [
+    {"en": "bellyache", "ja": "腹痛", "note": "口語。動詞で使うと「ぶつぶつ文句を言う」という意味にもなる", "type": "word"},
+    {"en": "bite one's nails", "ja": "爪をかむ＝不安でそわそわする", "note": "nail-biting で「ハラハラする（試合など）」という形容詞にもなる", "type": "phrase"},
+    {"en": "kinda", "ja": "ちょっと・なんか（kind of）", "note": "kind of の発音どおりのつづり。「なんか面白い」くらいの軽いぼかし", "type": "slang"},
+    {"en": "in the gutter", "ja": "側溝に；どん底に落ちて", "note": "gutter は道路わきの排水溝。比喩で「落ちぶれた状態」", "type": "phrase"},
+    {"en": "vendetta", "ja": "血の復讐・執念深い報復", "note": "映画『V for Vendetta』をもじった言い回し", "type": "word"},
+    {"en": "noose", "ja": "（首つり用の）縄の輪", "note": "", "type": "word"},
+    {"en": "reckless", "ja": "無謀な・向こう見ずな", "note": "reckless driving＝無謀運転", "type": "word"},
+    {"en": "lose one's mind / I don't mind", "ja": "正気を失う／気にしない", "note": "同じ mind で「頭」と「気にする」をかけた言葉遊び", "type": "phrase"}
+  ],
+  "bad guy|Billie Eilish": [
+    {"en": "tippy toes", "ja": "つま先立ち", "note": "tiptoes の幼児語っぽい言い方。on one's tiptoes で「つま先立ちで・そっと」", "type": "slang"},
+    {"en": "creep around", "ja": "こそこそ歩き回る", "note": "creep は「忍び足で動く」。creepy（気味が悪い）と同じ語源", "type": "phrase"},
+    {"en": "cynical", "ja": "冷笑的な・ひねくれた", "note": "人の善意を信じない態度。名詞は cynic", "type": "word"},
+    {"en": "can't get enough (of)", "ja": "いくらあっても足りない＝大好き", "note": "I can't get enough of this song.（この曲いくら聴いても飽きない）のように使う", "type": "phrase"},
+    {"en": "puff out one's chest", "ja": "胸を張る＝いばる", "note": "歌詞では chest puffed（胸をふくらませた）の形。強がる男性をからかっている", "type": "phrase"},
+    {"en": "seduce", "ja": "誘惑する", "note": "", "type": "word"},
+    {"en": "Duh", "ja": "当たり前でしょ／わかりきってる", "note": "相手の言ったことが当然すぎるときの、あきれた相づち。くだけた場面だけで使う", "type": "slang"},
+    {"en": "play the role", "ja": "その役を演じる", "note": "play the part も同じ意味", "type": "phrase"},
+    {"en": "cologne", "ja": "コロン（主に男性用の香水）", "note": "発音は「カローン」に近い", "type": "word"}
+  ],
+  "bury a friend|Billie Eilish": [
+    {"en": "spit it out", "ja": "さっさと言って", "note": "言いよどむ相手を急かす決まり文句。「吐き出せ」が直訳", "type": "phrase"},
+    {"en": "clean someone out", "ja": "〜を一文無しにする", "note": "お金を根こそぎ使わせるイメージ", "type": "phrase"},
+    {"en": "satisfactory", "ja": "満足のいく・申し分ない", "note": "やや硬い語。成績評価の「可」にも使う", "type": "word"},
+    {"en": "keep someone in the dark", "ja": "〜に何も知らせないでおく", "note": "I was kept in the dark.（何も知らされていなかった）", "type": "phrase"},
+    {"en": "calm and collected", "ja": "冷静沈着な", "note": "collected 単体でも「落ち着いた」の意味がある", "type": "phrase"},
+    {"en": "fall apart", "ja": "崩れる；精神的にボロボロになる", "note": "物にも人にも使える", "type": "phrase"},
+    {"en": "keep one's head down", "ja": "目立たないようにする", "note": "トラブルを避けて静かにしているニュアンス", "type": "phrase"},
+    {"en": "bury the hatchet", "ja": "仲直りする", "note": "「斧を埋める」＝戦いをやめる。曲名の bury a friend との対比になっている", "type": "phrase"},
+    {"en": "limb", "ja": "手足", "note": "腕や脚をまとめた言い方。木の「大枝」の意味もある", "type": "word"}
+  ],
+  "wish you were gay|Billie Eilish": [
+    {"en": "three's a crowd", "ja": "三人だと一人が邪魔者になる", "note": "ことわざ Two's company, three's a crowd.（二人は仲良し、三人は仲間割れ）から", "type": "phrase"},
+    {"en": "slip away", "ja": "そっと離れていく・いつの間にか消える", "note": "時間・チャンス・人に使える", "type": "phrase"},
+    {"en": "look the other way", "ja": "見て見ぬふりをする", "note": "歌詞では walk the other way（避けて行ってしまう）も出てくる", "type": "phrase"},
+    {"en": "all in blue", "ja": "（メッセージが）青い吹き出しばかり", "note": "iPhoneのメッセージで自分の送信は青。自分ばかり送っていて返事がない、という今どきの表現", "type": "slang"},
+    {"en": "12-step (program)", "ja": "12ステップ・プログラム", "note": "依存症の回復プログラム。「あなた専用の治し方があるの？」という皮肉", "type": "phrase"},
+    {"en": "tear out one's hair", "ja": "髪をかきむしる＝ひどくいら立つ・悩む", "note": "", "type": "phrase"},
+    {"en": "spare one's pride", "ja": "プライドが傷つかずにすむようにする", "note": "spare ＝（いやなことを）させずにおく。spare me the details（詳しい話はいいよ）", "type": "phrase"},
+    {"en": "can't stand", "ja": "耐えられない・大嫌い", "note": "I can't stand him.（あの人、無理）", "type": "phrase"}
+  ],
+  "when the party's over|Billie Eilish": [
+    {"en": "no good for someone", "ja": "〜にとってよくない（相手をだめにする）", "note": "I'm no good for you.＝私といてもあなたのためにならない", "type": "phrase"},
+    {"en": "can't afford to", "ja": "〜する余裕がない", "note": "お金だけでなく「〜するわけにはいかない」にも使う", "type": "phrase"},
+    {"en": "on one's own", "ja": "ひとりで", "note": "by oneself とほぼ同じ", "type": "phrase"},
+    {"en": "keep someone closer", "ja": "〜をもっと近くに置く", "note": "ことわざ Keep your friends close, but your enemies closer.（敵はもっと近くに置け）のもじり", "type": "phrase"},
+    {"en": "like it like that", "ja": "そういう感じが好き", "note": "I like it like that.＝「それでいいの、そのままが好き」", "type": "phrase"},
+    {"en": "say one's goodbyes", "ja": "別れを告げる", "note": "goodbyes と複数形になるのがポイント", "type": "phrase"},
+    {"en": "let someone go", "ja": "〜を手放す・解放する", "note": "仕事の文脈では「解雇する」の婉曲表現にもなる", "type": "phrase"}
+  ],
+  "you should see me in a crown|Billie Eilish": [
+    {"en": "bite one's tongue", "ja": "言いたいことをぐっとこらえる", "note": "舌をかんで黙るイメージ", "type": "phrase"},
+    {"en": "bide one's time", "ja": "好機をじっと待つ", "note": "bite / bide の音遊びになっている", "type": "phrase"},
+    {"en": "vandalize", "ja": "（わざと）壊す・落書きで汚す", "note": "名詞 vandalism＝器物損壊", "type": "word"},
+    {"en": "run this town", "ja": "この町を牛耳る", "note": "run ＝経営する・支配する", "type": "phrase"},
+    {"en": "nothing town", "ja": "何もない町・つまらない町", "note": "nothing を形容詞のように使ったくだけた言い方", "type": "slang"},
+    {"en": "bow", "ja": "お辞儀する・ひれ伏す", "note": "発音は「バウ」。弓の bow（ボウ）とは別", "type": "word"},
+    {"en": "hearse", "ja": "霊柩車", "note": "", "type": "word"},
+    {"en": "one by one", "ja": "ひとりずつ・一つずつ", "note": "", "type": "phrase"}
+  ],
+  "all the good girls go to hell|Billie Eilish": [
+    {"en": "kill time", "ja": "時間をつぶす", "note": "", "type": "phrase"},
+    {"en": "commit to", "ja": "〜に本気で取り組む・身をささげる", "note": "I can't commit.＝（関係や約束に）踏み切れない", "type": "phrase"},
+    {"en": "Pearly Gates", "ja": "天国の門", "note": "真珠でできた天国の門。歌詞の Peter は門番の聖ペテロ", "type": "phrase"},
+    {"en": "picket fence", "ja": "（白い）杭垣", "note": "white picket fence は「郊外の理想の家庭」の象徴", "type": "phrase"},
+    {"en": "Don't say I didn't warn ya", "ja": "忠告しなかったとは言わせないよ", "note": "ya は you のくだけた形", "type": "phrase"},
+    {"en": "greenery", "ja": "緑の草木", "note": "お金（緑の紙幣）や大麻をほのめかす含みもある", "type": "word"},
+    {"en": "fetters", "ja": "足かせ", "note": "比喩で「束縛」", "type": "word"},
+    {"en": "should know better", "ja": "分別があってもいいはず", "note": "You should know better.＝そんなことするほど子どもじゃないでしょ", "type": "phrase"},
+    {"en": "cover-up / cave in", "ja": "もみ消し／崩れ落ちる", "note": "隠し事がばれかけている様子", "type": "phrase"},
+    {"en": "snowflake", "ja": "（スラング）繊細すぎる人", "note": "すぐ傷つく人をからかう言い方", "type": "slang"}
+  ],
+  "Therefore I Am|Billie Eilish": [
+    {"en": "I think, therefore I am", "ja": "われ思う、ゆえにわれあり", "note": "デカルトの有名な言葉", "type": "phrase"},
+    {"en": "the man", "ja": "（スラング）すごいやつ・イケてる人", "note": "You think you're the man.＝自分がすごいと思ってる", "type": "slang"},
+    {"en": "What the hell are you talking about?", "ja": "いったい何言ってんの？", "note": "the hell で強いいら立ちを出す", "type": "phrase"},
+    {"en": "get my name out of your mouth", "ja": "私の名前を口にしないで", "note": "私の噂をするな、という強い言い方", "type": "phrase"},
+    {"en": "couldn't care less", "ja": "まったくどうでもいい", "note": "「これ以上気にしないことはできない」＝最低限も気にしていない", "type": "phrase"},
+    {"en": "give someone my best", "ja": "〜によろしく伝えて", "note": "Give them my best.（皮肉にも使える）", "type": "phrase"},
+    {"en": "call one's bluff", "ja": "はったりを見破る・やれるものならやってみろと迫る", "note": "ポーカーの用語から", "type": "phrase"},
+    {"en": "unremarkable", "ja": "目立たない・平凡な", "note": "remarkable（注目に値する）の反対", "type": "word"},
+    {"en": "catch someone's name", "ja": "名前を聞き取る", "note": "I didn't catch your name.＝お名前なんでしたっけ（ここでは知らないふりの皮肉）", "type": "phrase"}
+  ],
+  "my future|Billie Eilish": [
+    {"en": "can't seem to", "ja": "どうも〜できない", "note": "I can't seem to focus.＝なぜか集中できない", "type": "phrase"},
+    {"en": "complexion", "ja": "顔色・肌のつや", "note": "", "type": "word"},
+    {"en": "reflection", "ja": "（鏡などに）映った姿", "note": "「熟考」の意味もある", "type": "word"},
+    {"en": "supposedly", "ja": "〜ということになっている・らしい", "note": "世間ではそう言われているけど…という疑いのニュアンス", "type": "word"},
+    {"en": "know better than to", "ja": "〜するほど馬鹿ではない", "note": "I know better than to trust him.", "type": "phrase"},
+    {"en": "a couple (of) years", "ja": "2、3年", "note": "a couple は口語で「2つくらい」", "type": "phrase"}
+  ],
+  "Happier Than Ever|Billie Eilish": [
+    {"en": "skip my avenue", "ja": "私の通りを避ける＝私を避けて通る", "note": "avenue は大通り。比喩的な言い方", "type": "phrase"},
+    {"en": "pass through", "ja": "（町などを）通りがかる", "note": "I'm just passing through.＝通りがかっただけ", "type": "phrase"},
+    {"en": "under the influence", "ja": "酒に酔って", "note": "DUI＝driving under the influence（飲酒運転）", "type": "phrase"},
+    {"en": "waste one's breath", "ja": "言っても無駄", "note": "Don't waste your breath.＝言うだけ無駄だよ", "type": "phrase"},
+    {"en": "relate to", "ja": "〜に共感する", "note": "I can relate.＝わかる〜", "type": "phrase"},
+    {"en": "shitty", "ja": "ひどい・最低の", "note": "下品なので使う場面に注意", "type": "slang"},
+    {"en": "talk shit about", "ja": "〜の悪口を言う", "note": "下品な言い方。ふつうは talk bad about", "type": "slang"},
+    {"en": "pay mind to", "ja": "〜を気にかける", "note": "pay no mind＝気にしない", "type": "phrase"},
+    {"en": "shut someone out", "ja": "〜を締め出す・遠ざける", "note": "", "type": "phrase"},
+    {"en": "misunderstood", "ja": "誤解されている", "note": "", "type": "word"}
+  ],
+  "Your Power|Billie Eilish": [
+    {"en": "abuse one's power", "ja": "権力を乱用する", "note": "abuse は「乱用・虐待」", "type": "phrase"},
+    {"en": "play the part", "ja": "それらしく振る舞う", "note": "", "type": "phrase"},
+    {"en": "no wonder (why)", "ja": "どうりで〜なわけだ", "note": "No wonder you're tired.", "type": "phrase"},
+    {"en": "How dare you?", "ja": "よくもそんなことを", "note": "強い怒り・非難", "type": "phrase"},
+    {"en": "take it all back", "ja": "すべて取り消す", "note": "I take it back.＝今の発言は取り消す", "type": "phrase"},
+    {"en": "lose one's appeal", "ja": "魅力を失う", "note": "", "type": "phrase"},
+    {"en": "turn out", "ja": "結局〜だとわかる", "note": "It turns out that ...", "type": "phrase"},
+    {"en": "kill one's contract", "ja": "契約を打ち切る", "note": "kill は口語で「（計画などを）つぶす」", "type": "phrase"}
+  ],
+  "Lost Cause|Billie Eilish": [
+    {"en": "lose track of time", "ja": "時間を忘れる", "note": "", "type": "phrase"},
+    {"en": "the last straw", "ja": "我慢の限界を超える最後のひと押し", "note": "「ラクダの背を折る最後のわら1本」から", "type": "phrase"},
+    {"en": "have one's shit together", "ja": "ちゃんとしている・しっかりしている", "note": "下品な言い方。get it together なら丁寧", "type": "slang"},
+    {"en": "lost cause", "ja": "見込みのない人・もの", "note": "", "type": "phrase"},
+    {"en": "ain't nothin' but", "ja": "〜以外の何者でもない", "note": "ain't + nothing の二重否定で意味を強めるくだけた言い方", "type": "slang"},
+    {"en": "outlaw", "ja": "無法者・アウトロー", "note": "", "type": "word"},
+    {"en": "prove someone wrong", "ja": "〜の予想が間違いだと証明する", "note": "", "type": "phrase"},
+    {"en": "complacent", "ja": "現状に満足しきった・油断した", "note": "", "type": "word"},
+    {"en": "face it", "ja": "現実を直視する", "note": "Let's face it.＝現実を見よう", "type": "phrase"}
+  ],
+  "Getting Older|Billie Eilish": [
+    {"en": "age well", "ja": "いい年の取り方をする", "note": "ワインや映画にも「時が経っても色あせない」の意味で使う", "type": "phrase"},
+    {"en": "deranged", "ja": "常軌を逸した・錯乱した", "note": "", "type": "word"},
+    {"en": "crave", "ja": "渇望する", "note": "名詞 craving＝強い欲求", "type": "word"},
+    {"en": "can't shake the feeling", "ja": "〜という気持ちがぬぐえない", "note": "shake off＝振り払う", "type": "phrase"},
+    {"en": "rehearsed", "ja": "練習ずみのような・わざとらしい", "note": "", "type": "word"},
+    {"en": "estranged", "ja": "疎遠になった", "note": "家族の不仲によく使う", "type": "word"},
+    {"en": "keep someone employed", "ja": "〜に仕事を与え続ける", "note": "好きだったことが、今はただの仕事になった、という意味", "type": "phrase"},
+    {"en": "long for", "ja": "〜を切望する", "note": "", "type": "phrase"},
+    {"en": "endeavor", "ja": "努力・試み", "note": "硬い語。TOEFLでも出る", "type": "word"},
+    {"en": "prioritize", "ja": "優先する", "note": "", "type": "word"}
+  ],
+  "What Was I Made For?|Billie Eilish": [
+    {"en": "what I was made for", "ja": "何のために生まれたのか", "note": "be made for＝〜のために作られた／〜にぴったり", "type": "phrase"},
+    {"en": "take a drive", "ja": "ドライブする", "note": "go for a drive とも言う", "type": "phrase"},
+    {"en": "an ideal", "ja": "理想（像）", "note": "名詞の ideal。映画バービーの人形としての自分", "type": "word"},
+    {"en": "turns out", "ja": "結局〜だとわかる", "note": "It turns out の It を省いた口語の形", "type": "phrase"},
+    {"en": "something you paid for", "ja": "お金で買ったもの", "note": "", "type": "phrase"}
+  ],
+  "LUNCH|Billie Eilish": [
+    {"en": "eat someone for lunch", "ja": "〜を簡単に打ち負かす", "note": "もとはこの慣用句。ここでは恋愛的にひねっている", "type": "phrase"},
+    {"en": "the one", "ja": "運命の人", "note": "She might be the one.", "type": "phrase"},
+    {"en": "a craving, not a crush", "ja": "片思いじゃなく、強い欲求", "note": "crush＝片思い・夢中、craving＝渇望", "type": "phrase"},
+    {"en": "pull up a chair", "ja": "椅子を引き寄せて座る", "note": "Pull up a chair.＝どうぞ座って", "type": "phrase"},
+    {"en": "put up one's hair", "ja": "髪をまとめる", "note": "", "type": "phrase"},
+    {"en": "run a shower", "ja": "シャワーを出しておく", "note": "run a bath＝お風呂を入れる", "type": "phrase"},
+    {"en": "smile from ear to ear", "ja": "満面の笑み", "note": "", "type": "phrase"},
+    {"en": "deer in the headlights", "ja": "ライトに照らされた鹿＝固まって動けない", "note": "驚いてフリーズした様子", "type": "phrase"},
+    {"en": "hunch", "ja": "直感・予感", "note": "I have a hunch that ...", "type": "word"}
+  ],
+  "BIRDS OF A FEATHER|Billie Eilish": [
+    {"en": "birds of a feather", "ja": "似た者同士", "note": "ことわざ Birds of a feather flock together.（類は友を呼ぶ）", "type": "phrase"},
+    {"en": "stick together", "ja": "離れずにいる・団結する", "note": "", "type": "phrase"},
+    {"en": "rot away", "ja": "朽ち果てる", "note": "", "type": "phrase"},
+    {"en": "casket", "ja": "棺", "note": "coffin とほぼ同じ", "type": "word"},
+    {"en": "turn blue", "ja": "（息ができず）青ざめる", "note": "", "type": "phrase"},
+    {"en": "full of shit", "ja": "うそばっかり・でたらめ", "note": "下品な言い方。親しい間柄でからかうときにも", "type": "slang"},
+    {"en": "it's a bit", "ja": "（スラング）ネタでしょ・冗談でしょ", "note": "bit＝お笑いの持ちネタ", "type": "slang"},
+    {"en": "'til", "ja": "〜まで（until）", "note": "", "type": "slang"}
+  ],
+  "CHIHIRO|Billie Eilish": [
+    {"en": "come back around", "ja": "戻ってくる", "note": "", "type": "phrase"},
+    {"en": "cope with", "ja": "〜に対処する・耐える", "note": "", "type": "phrase"},
+    {"en": "what's in store", "ja": "この先待ち受けているもの", "note": "Who knows what's in store for us?", "type": "phrase"},
+    {"en": "contemplate", "ja": "じっくり考える", "note": "", "type": "word"},
+    {"en": "beg your pardon", "ja": "失礼ですが／すみません", "note": "丁寧な言い方。I beg your pardon? は「もう一度言ってください」にも", "type": "phrase"},
+    {"en": "wring one's hands", "ja": "手をもみしぼる＝心配・苦悩する", "note": "", "type": "phrase"},
+    {"en": "make it back", "ja": "無事に戻る", "note": "make it＝うまくたどり着く", "type": "phrase"}
+  ],
+  "WILDFLOWER|Billie Eilish": [
+    {"en": "fall out of love", "ja": "恋が冷める", "note": "fall in love の反対", "type": "phrase"},
+    {"en": "let go", "ja": "手放す・あきらめる", "note": "", "type": "phrase"},
+    {"en": "put it all behind someone", "ja": "すべて過去のこととして忘れる", "note": "", "type": "phrase"},
+    {"en": "in the back of one's mind", "ja": "心の片隅に", "note": "", "type": "phrase"},
+    {"en": "cross the line", "ja": "一線を越える", "note": "", "type": "phrase"},
+    {"en": "keep it to oneself", "ja": "自分の胸にしまっておく", "note": "", "type": "phrase"},
+    {"en": "didn't mean to", "ja": "〜するつもりはなかった", "note": "I didn't mean to hurt you.", "type": "phrase"}
+  ],
+  "TV|Billie Eilish": [
+    {"en": "What's the point of ~?", "ja": "〜に何の意味があるの？", "note": "", "type": "phrase"},
+    {"en": "leave someone behind", "ja": "〜を置き去りにする", "note": "", "type": "phrase"},
+    {"en": "starve oneself", "ja": "食事を抜く", "note": "", "type": "phrase"},
+    {"en": "in denial", "ja": "現実を認めようとしない", "note": "", "type": "phrase"},
+    {"en": "go wild", "ja": "熱狂する・大騒ぎになる", "note": "", "type": "phrase"},
+    {"en": "on trial", "ja": "裁判にかけられて", "note": "", "type": "phrase"},
+    {"en": "overturn", "ja": "（判決を）覆す", "note": "", "type": "word"},
+    {"en": "Roe v. Wade", "ja": "ロー対ウェイド判決", "note": "1973年に中絶の権利を認めた米最高裁判決。2022年に覆された", "type": "phrase"},
+    {"en": "get along with", "ja": "〜とうまくやる", "note": "", "type": "phrase"}
+  ]
+};
+/* VOCAB:END */
+
 const listEl = document.getElementById('songList');
 const emptyEl = document.getElementById('emptyState');
 const countEl = document.getElementById('countLabel');
@@ -1804,6 +2047,164 @@ try { openArtists = new Set(JSON.parse(localStorage.getItem(LS_OPEN) || '[]')); 
 function saveOpen() {
   localStorage.setItem(LS_OPEN, JSON.stringify(Array.from(openArtists)));
 }
+
+/* ---------- この曲の単語・表現（LYRIC_VOCAB は add_vocab.py が書く） ---------- */
+// 削除＝非表示。キーは「曲名|歌手::英語」。合言葉があれば Firestore で端末間共有する
+const LS_HIDDEN = 'lyricsLinks_hiddenVocab';
+const TYPE_LABEL = { word: '単語', phrase: '表現', slang: 'スラング・口語' };
+let hiddenVocab = new Set();
+try { hiddenVocab = new Set(JSON.parse(localStorage.getItem(LS_HIDDEN) || '[]')); } catch (e) {}
+const openVocab = new Set();
+
+const songKey = s => s.title + '|' + s.artist;
+const vocabKey = (s, it) => songKey(s) + '::' + it.en.toLowerCase();
+const allVocab = s => LYRIC_VOCAB[songKey(s)] || [];
+const shownVocab = s => allVocab(s).filter(it => !hiddenVocab.has(vocabKey(s, it)));
+
+function saveHidden() {
+  try { localStorage.setItem(LS_HIDDEN, JSON.stringify(Array.from(hiddenVocab))); } catch (e) {}
+  vocabSyncPush();
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+function vocabButton(s) {
+  const n = shownVocab(s).length;
+  if (!allVocab(s).length) return null;
+  const btn = document.createElement('button');
+  const on = openVocab.has(songKey(s));
+  btn.className = 'vocab-btn' + (on ? ' on' : '');
+  btn.textContent = on ? '📝 単語・表現をとじる' : `📝 この曲の単語・表現を表示（${n}）`;
+  btn.onclick = () => {
+    if (openVocab.has(songKey(s))) openVocab.delete(songKey(s));
+    else openVocab.add(songKey(s));
+    renderSongs();
+  };
+  return btn;
+}
+
+function vocabPanel(s) {
+  const panel = document.createElement('div');
+  panel.className = 'vocab-panel';
+  const items = shownVocab(s);
+  if (!items.length) panel.innerHTML = '<div class="vi-empty">表示する単語・表現はありません</div>';
+  items.forEach(it => {
+    const el = document.createElement('div');
+    el.className = 'vi';
+    const type = TYPE_LABEL[it.type] ? it.type : 'phrase';
+    el.innerHTML = `
+      <div class="vi-head">
+        <span class="vi-en">${escapeHtml(it.en)}</span>
+        <span class="vi-type ${type}">${TYPE_LABEL[type]}</span>
+        <button class="vi-icon" title="読み上げ">🔊</button>
+        <button class="vi-icon del" title="削除">🗑</button>
+      </div>
+      <div class="vi-ja">${escapeHtml(it.ja)}</div>
+      ${it.note ? `<div class="vi-note">${escapeHtml(it.note)}</div>` : ''}
+    `;
+    const [btnSpeak, btnDel] = el.querySelectorAll('button');
+    btnSpeak.onclick = () => speak(it.en);
+    btnDel.onclick = () => {
+      hiddenVocab.add(vocabKey(s, it));
+      saveHidden();
+      renderSongs();
+    };
+    panel.appendChild(el);
+  });
+  const hiddenHere = allVocab(s).filter(it => hiddenVocab.has(vocabKey(s, it)));
+  const foot = document.createElement('div');
+  foot.className = 'vi-foot';
+  foot.innerHTML = '<span>🔊 で読み上げ ／ 🗑 で削除</span>';
+  if (hiddenHere.length) {
+    const back = document.createElement('button');
+    back.textContent = `削除した${hiddenHere.length}件を戻す`;
+    back.onclick = () => {
+      hiddenHere.forEach(it => hiddenVocab.delete(vocabKey(s, it)));
+      saveHidden();
+      renderSongs();
+    };
+    foot.appendChild(back);
+  }
+  panel.appendChild(foot);
+  return panel;
+}
+
+/* ---------- 削除した単語・表現の端末間共有（他の学習サイトと同じ合言葉 aien_sync_id） ---------- */
+const VOCAB_SYNC_CONFIG = {
+  apiKey: "AIzaSyASWojYpZ3KJBYG9V30Y4BmplUFORYOelw",
+  authDomain: "ai-english-review.firebaseapp.com",
+  projectId: "ai-english-review",
+  storageBucket: "ai-english-review.firebasestorage.app",
+  messagingSenderId: "146537476580",
+  appId: "1:146537476580:web:4ef3dfdf9c0969f25b17f1"
+};
+let _vocabSyncDoc = null;
+
+function syncId() {
+  let id = null;
+  try { id = localStorage.getItem('aien_sync_id'); } catch (e) {}
+  return (id && id !== '__none__') ? id : null;
+}
+
+function loadScript(src) {
+  return new Promise((ok, ng) => {
+    const el = document.createElement('script');
+    el.src = src; el.onload = ok; el.onerror = ng;
+    document.head.appendChild(el);
+  });
+}
+
+async function initVocabSync() {
+  const id = syncId();
+  if (!id) return;
+  try {
+    const FB = 'https://www.gstatic.com/firebasejs/10.14.1/';
+    if (!window.firebase) {
+      await loadScript(FB + 'firebase-app-compat.js');
+      await loadScript(FB + 'firebase-firestore-compat.js');
+    }
+    if (!firebase.apps.length) firebase.initializeApp(VOCAB_SYNC_CONFIG);
+    const doc = firebase.firestore().collection('reviewLists').doc(id + '__lyrics_vocab');
+    const snap = await Promise.race([
+      doc.get(),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000))
+    ]);
+    _vocabSyncDoc = doc;
+    if (snap.exists && Array.isArray(snap.data().hidden)) {
+      hiddenVocab = new Set(snap.data().hidden);
+      try { localStorage.setItem(LS_HIDDEN, JSON.stringify(Array.from(hiddenVocab))); } catch (e) {}
+      renderSongs();
+    } else if (hiddenVocab.size) {
+      vocabSyncPush();
+    }
+  } catch (e) {
+    console.warn('単語・表現の削除の同期に失敗しました（この端末の記録だけで動きます）', e);
+  }
+}
+
+function vocabSyncPush() {
+  if (!_vocabSyncDoc) return;
+  _vocabSyncDoc.set({ hidden: Array.from(hiddenVocab), updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+    .catch(e => console.warn('削除の送信に失敗しました', e));
+}
+
+function renderSyncLabel() {
+  const id = syncId();
+  document.getElementById('syncLabel').textContent = id ? `共有ON（合言葉: ${id}）` : '共有OFF（この端末だけ）';
+}
+
+document.getElementById('btnSync').onclick = () => {
+  const input = prompt('他の学習サイトと同じ合言葉を入れると、削除した単語・表現がPC/スマホで共有されます。\n共有しない場合は空欄のままOK。', syncId() || '');
+  if (input === null) return;
+  try { localStorage.setItem('aien_sync_id', input.trim() || '__none__'); } catch (e) {}
+  location.reload();
+};
 
 function allTags() {
   const set = new Set();
@@ -1845,7 +2246,7 @@ function filteredSongs() {
   const q = searchBox.value.trim().toLowerCase();
   return SONGS.filter(s => {
     const matchesTag = !activeTag || (s.tags || []).includes(activeTag);
-    const haystack = [s.title, s.artist, ...(s.tags || [])].join(' ').toLowerCase();
+    const haystack = [s.title, s.artist, ...(s.tags || []), ...shownVocab(s).map(it => it.en)].join(' ').toLowerCase();
     const matchesQuery = !q || haystack.includes(q);
     return matchesTag && matchesQuery;
   });
@@ -1875,18 +2276,27 @@ function songCard(s) {
       </div>
       <div class="song-memo">${escapeHtml(s.memo || '')}</div>
     `;
+  const btn = vocabButton(s);
+  if (btn) {
+    card.querySelector('.song-links').appendChild(btn);
+    if (openVocab.has(songKey(s))) card.insertBefore(vocabPanel(s), card.querySelector('.song-memo'));
+  }
   return card;
 }
 
 function songRow(s) {
   const row = document.createElement('div');
-  row.className = 'song-row' + (s.memo ? ' has-memo' : '');
+  const vOpen = openVocab.has(songKey(s)) && allVocab(s).length;
+  row.className = 'song-row' + (s.memo ? ' has-memo' : '') + (vOpen ? ' vocab-open' : '');
   row.innerHTML = `
-      <span class="song-row-title">${escapeHtml(s.title)}</span>
+      <div class="song-row-main"><span class="song-row-title">${escapeHtml(s.title)}</span></div>
       ${s.translationUrl ? `<a href="${s.translationUrl}" target="_blank" rel="noopener" title="${escapeHtml(s.translationSiteName || '')}">📖 和訳</a>` : ''}
       ${s.youtubeUrl ? `<a href="${s.youtubeUrl}" target="_blank" rel="noopener">▶️ 動画</a>` : ''}
       ${s.memo ? `<div class="song-row-memo">${escapeHtml(s.memo)}</div>` : ''}
     `;
+  const btn = vocabButton(s);
+  if (btn) row.querySelector('.song-row-main').appendChild(btn);
+  if (vOpen) row.appendChild(vocabPanel(s));
   return row;
 }
 
@@ -1975,6 +2385,8 @@ searchBox.addEventListener('input', renderSongs);
 renderTagFilters();
 renderViewToggle();
 renderSongs();
+renderSyncLabel();
+initVocabSync();
 </script>
 </body>
 </html>
