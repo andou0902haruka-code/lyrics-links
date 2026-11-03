@@ -152,6 +152,12 @@
   }
   .vocab-btn.on { background: var(--accent); color: #fff; }
   .song-links .vocab-btn { font-size: 0.85rem; padding: 7px 14px; border-radius: 10px; }
+  .song-row-tools { display: flex; flex-wrap: wrap; gap: 6px; }
+  .song-test {
+    font: inherit; font-size: 0.72rem; padding: 3px 9px; border-radius: 999px; cursor: pointer;
+    background: var(--card-bg); color: var(--accent-dark); border: 1px solid var(--accent);
+  }
+  .song-links .song-test { font-size: 0.85rem; padding: 7px 14px; border-radius: 10px; }
   .song-row.vocab-open { flex-wrap: wrap; }
   .vocab-panel {
     flex-basis: 100%; margin-top: 6px; border: 1px solid var(--border); border-radius: 12px;
@@ -2214,6 +2220,17 @@ function vocabButton(s) {
   return btn;
 }
 
+// 曲ごとの「🎧 聞いてテスト」＝その曲の単語・表現だけを、音声を聞いて意味を選ぶ形式で出す
+function songTestButton(s) {
+  const n = shownVocab(s).length;
+  if (!n) return null;
+  const btn = document.createElement('button');
+  btn.className = 'song-test';
+  btn.textContent = `🎧 聞いてテスト（${n}問）`;
+  btn.onclick = () => startSongTest(s);
+  return btn;
+}
+
 // 1項目（英語・種類・🔊・☆・🗑・意味・解説）。onChange は ☆/🗑 のあとの描き直し
 function vocabItemEl(s, it, { del = true, onChange = renderSongs } = {}) {
   const el = document.createElement('div');
@@ -2258,12 +2275,6 @@ function vocabPanel(s) {
   const foot = document.createElement('div');
   foot.className = 'vi-foot';
   foot.innerHTML = '<span>🔊 読み上げ ／ ☆ お気に入り ／ 🗑 削除</span>';
-  if (items.length) {
-    const t = document.createElement('button');
-    t.textContent = '✍️ この曲でテスト';
-    t.onclick = () => showTest('song:' + songKey(s));
-    foot.appendChild(t);
-  }
   if (hiddenHere.length) {
     const back = document.createElement('button');
     back.textContent = `削除した${hiddenHere.length}件を戻す`;
@@ -2446,6 +2457,8 @@ function songCard(s) {
     card.querySelector('.song-links').appendChild(btn);
     if (openVocab.has(songKey(s))) card.insertBefore(vocabPanel(s), card.querySelector('.song-memo'));
   }
+  const tb = songTestButton(s);
+  if (tb) card.querySelector('.song-links').appendChild(tb);
   return card;
 }
 
@@ -2460,7 +2473,13 @@ function songRow(s) {
       ${s.memo ? `<div class="song-row-memo">${escapeHtml(s.memo)}</div>` : ''}
     `;
   const btn = vocabButton(s);
-  if (btn) row.querySelector('.song-row-main').appendChild(btn);
+  const tb = songTestButton(s);
+  if (btn || tb) {
+    const tools = document.createElement('div');
+    tools.className = 'song-row-tools';
+    [btn, tb].forEach(b => b && tools.appendChild(b));
+    row.querySelector('.song-row-main').appendChild(tools);
+  }
   if (vOpen) row.appendChild(vocabPanel(s));
   return row;
 }
@@ -2623,12 +2642,28 @@ function scopeOptions() {
   return { opts, songs };
 }
 
+// 一覧にもどったとき、テストを始めた位置にスクロールを戻す
+let listScrollY = 0;
+function openTestView() {
+  if (!listView.hidden) listScrollY = window.scrollY || 0;
+  listView.hidden = true;
+  testView.hidden = false;
+}
+
 function showTest(scope) {
   if (scope) { T.scope = scope; saveTCfg(); }
   run = null;
-  listView.hidden = true;
-  testView.hidden = false;
+  openTestView();
   renderTestSetup();
+  window.scrollTo(0, 0);
+}
+
+// 曲の行の「🎧 聞いてテスト」: 設定画面を出さず、その曲の全項目を「聞いて意味を選ぶ」だけで出す（テストの設定 T は変えない）
+function startSongTest(s) {
+  const entries = scopeEntries('song:' + songKey(s));
+  if (!entries.length) return;
+  openTestView();
+  startRun(shuffle(entries), { fmt: 'listen', song: s });
   window.scrollTo(0, 0);
 }
 
@@ -2639,6 +2674,7 @@ function showList() {
   listView.hidden = false;
   renderViewToggle();
   renderSongs();
+  window.scrollTo(0, listScrollY);
 }
 
 function renderTestSetup() {
@@ -2676,20 +2712,24 @@ function renderTestSetup() {
   testView.querySelector('#tStart').onclick = () => startRun(pickQuestions());
 }
 
-function startRun(entries) {
+// opts = { fmt: 形式を固定, song: 曲ごとのテストの曲 }（曲ごとのテストは設定 T を使わない）
+function startRun(entries, opts = {}) {
   const fmts = ['meaning', 'english', 'listen', 'write'];
-  run = { qs: entries.map(e => ({ ...e, fmt: T.format === 'mix' ? fmts[Math.floor(Math.random() * fmts.length)] : T.format })), i: 0, results: [] };
+  const fmtOf = () => opts.fmt || (T.format === 'mix' ? fmts[Math.floor(Math.random() * fmts.length)] : T.format);
+  run = { qs: entries.map(e => ({ ...e, fmt: fmtOf() })), i: 0, results: [], opts, song: opts.song || null };
   renderQuestion();
 }
 
-// 4択の選択肢。同じ種類（単語/表現/スラング）からなるべく選ぶ
+// 4択の選択肢。同じ種類（単語/表現/スラング）からなるべく選ぶ。
+// 曲ごとのテストでは、まずその曲の中から選ぶ（足りないときだけ他の曲から）
 function choicesFor(q, field) {
   const pool = vocabEntries().filter(e => e.key !== q.key);
-  const same = shuffle(pool.filter(e => e.it.type === q.it.type));
-  const other = shuffle(pool.filter(e => e.it.type !== q.it.type));
+  const sameType = list => shuffle(list.filter(e => e.it.type === q.it.type)).concat(shuffle(list.filter(e => e.it.type !== q.it.type)));
+  const inSong = run && run.song ? pool.filter(e => e.s === run.song) : [];
+  const order = run && run.song ? sameType(inSong).concat(sameType(pool.filter(e => e.s !== run.song))) : sameType(pool);
   const seen = new Set([q.it[field]]);
   const picks = [];
-  for (const e of same.concat(other)) {
+  for (const e of order) {
     if (picks.length >= 3) break;
     if (!seen.has(e.it[field])) { seen.add(e.it[field]); picks.push(e.it[field]); }
   }
@@ -2720,7 +2760,7 @@ function renderQuestion() {
     : `<div class="t-choices">${choicesFor(q, field).map(c => `<button class="t-choice">${escapeHtml(c)}</button>`).join('')}</div>`;
   testView.innerHTML = `
     <div class="t-card">
-      <div class="t-top"><span>${run.i + 1} / ${run.qs.length}</span><span class="t-fmt">${FORMATS[q.fmt]}</span><button class="t-link" id="tQuit">✕ やめる</button></div>
+      <div class="t-top"><span>${run.i + 1} / ${run.qs.length}</span><span class="t-fmt">${run.song ? `🎵 ${escapeHtml(run.song.title)} ・ ` : ''}${FORMATS[q.fmt]}</span><button class="t-link" id="tQuit">✕ やめる</button></div>
       <div class="t-bar"><i style="width:${run.i / run.qs.length * 100}%"></i></div>
       <div class="t-q">${prompt}</div>
       ${body}
@@ -2807,7 +2847,7 @@ function answer(correct, given) {
 }
 
 function quitRun() {
-  if (!run.results.length) return renderTestSetup();
+  if (!run.results.length) return run.song ? showList() : renderTestSetup();
   run.quit = true;
   renderResults();
 }
@@ -2820,9 +2860,9 @@ function renderResults() {
   testView.innerHTML = `
     <div class="t-card">
       <div class="t-title"><h2>結果</h2><button class="t-link" id="tBack">← 一覧にもどる</button></div>
-      <div class="t-score"><b>${ok}</b> / ${res.length} 問正解${run.quit ? `<div class="t-note">途中でやめました（${res.length}問ぶんは記録ずみ）</div>` : ''}</div>
+      <div class="t-score">${run.song ? `<div class="t-note">🎵 ${escapeHtml(run.song.title)} — ${escapeHtml(run.song.artist)}（聞いて意味を選ぶ）</div>` : ''}<b>${ok}</b> / ${res.length} 問正解${run.quit ? `<div class="t-note">途中でやめました（${res.length}問ぶんは記録ずみ）</div>` : ''}</div>
       ${wrong.length ? `<button class="wide-btn" id="tRetry">❌ まちがえた${wrong.length}問をもう一度</button>` : ''}
-      <button class="wide-btn sub" id="tAgain">設定にもどる</button>
+      <button class="wide-btn sub" id="tAgain">${run.song ? '🔁 この曲をもう一度' : '設定にもどる'}</button>
       <div id="tList"></div>
     </div>`;
   const list = testView.querySelector('#tList');
@@ -2843,9 +2883,13 @@ function renderResults() {
     list.appendChild(row);
   });
   testView.querySelector('#tBack').onclick = showList;
-  testView.querySelector('#tAgain').onclick = () => { run = null; renderTestSetup(); };
+  const song = run.song, opts = run.opts;
+  testView.querySelector('#tAgain').onclick = () => {
+    if (song) return startSongTest(song);
+    run = null; renderTestSetup();
+  };
   const retry = testView.querySelector('#tRetry');
-  if (retry) retry.onclick = () => startRun(shuffle(wrong.map(r => r.q)));
+  if (retry) retry.onclick = () => startRun(shuffle(wrong.map(r => r.q)), opts);
   window.scrollTo(0, 0);
 }
 
