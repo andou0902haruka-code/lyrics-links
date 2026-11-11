@@ -188,6 +188,15 @@
   /* お気に入り */
   [hidden] { display: none !important; }
   .vi-icon.fav.on { background: var(--tag-bg); border-color: var(--accent); }
+  .vi-icon.nb { width: auto; padding: 0 7px; font-size: 0.7rem; white-space: nowrap; color: var(--sub); }
+  .vi-icon.nb.on { background: #e8f6ee; border-color: #2f9a5a; color: #2f7a4a; font-weight: 700; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); z-index: 50;
+    max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 12px; font-size: 0.82rem;
+    background: #2d3748; color: #fff; box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .view-btn.test { border-color: var(--accent); color: var(--accent-dark); }
   .fav-song { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px 4px; }
   .fav-song-head { font-size: 0.8rem; color: var(--sub); font-weight: 600; }
@@ -2270,10 +2279,10 @@ function saveHidden() {
 // お気に入りとテストの記録。キーは削除と同じ「曲名|歌手::英語」
 // favs: {key: {on, t}} ／ stats: {key: {ok, ng, last, lastOk}}。端末間は項目ごとに新しい方を採る
 const LS_USER = 'lyricsLinks_vocabUser';
-let U = { favs: {}, stats: {} };
+let U = { favs: {}, stats: {}, toVocab: {} };
 try {
   const v = JSON.parse(localStorage.getItem(LS_USER) || '{}');
-  U.favs = v.favs || {}; U.stats = v.stats || {};
+  U.favs = v.favs || {}; U.stats = v.stats || {}; U.toVocab = v.toVocab || {};
 } catch (e) {}
 let statsDirty = false;
 
@@ -2294,6 +2303,65 @@ function record(k, correct) {
   U.stats[k] = st;
   saveUser();
   statsDirty = true;
+}
+
+/* ---------- ＋単語ノート（英単語ノートサイトの未清書メモへ送る） ----------
+   英単語ノート（vocab-notes）とこのサイトは同じ andou0902haruka-code.github.io なので localStorage が共通。
+   押すと英単語ノートの未清書メモ（vocabNote_pending）に入れ、PendingInbox で受け箱
+   reviewLists/{合言葉}__vocab_inbox にも送る。「清書して」で /vocab-note-add が単語カードにする
+   （src:"lyrics"・srcRef:"曲名 / 歌手" → カードに「🎵 歌詞から」）。
+   送ったかどうかは U.toVocab {key:{on,t}}（__lyrics_vocab で端末間共有）。 */
+const VN_PENDING = 'vocabNote_pending';
+const normEn = x => String(x || '').trim().toLowerCase().replace(/\s+/g, ' ');
+function vnPending() {
+  try { const v = JSON.parse(localStorage.getItem(VN_PENDING) || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; }
+}
+function vnSetPending(list) {
+  try { localStorage.setItem(VN_PENDING, JSON.stringify(list)); } catch (e) {}
+  if (window.PendingInbox) window.PendingInbox.push('vocab_inbox', list);
+}
+const isSentToVocab = k => !!(U.toVocab[k] && U.toVocab[k].on);
+function vnItem(s, it, k) {
+  return {
+    id: Date.now(), word: it.en, memo: '', rough: it.ja, savedAt: new Date().toISOString(),
+    src: 'lyrics', srcRef: s.title + ' / ' + s.artist, hint: it.note || '', lyricKey: k
+  };
+}
+// 戻り値: 'added' | 'already'（未清書メモに同じ英語がもうある）| 'removed' | 'elsewhere'（この端末には無い）
+function toggleToVocab(s, it) {
+  const k = vocabKey(s, it);
+  let list = vnPending();
+  let res;
+  if (isSentToVocab(k)) {
+    const n = list.length;
+    list = list.filter(p => p.lyricKey !== k);
+    res = list.length < n ? 'removed' : 'elsewhere';
+    vnSetPending(list);
+    U.toVocab[k] = { on: false, t: Date.now() };
+  } else {
+    const dup = list.some(p => p.lyricKey === k || normEn(p.word) === normEn(it.en));
+    if (!dup) list.unshift(vnItem(s, it, k));
+    res = dup ? 'already' : 'added';
+    vnSetPending(list);
+    U.toVocab[k] = { on: true, t: Date.now() };
+  }
+  saveUser();
+  vocabSyncPush();
+  return res;
+}
+const VN_MSG = {
+  added: '📕 英単語ノートの未清書メモに入れました（「清書して」で単語カードになります）',
+  already: '📕 英単語ノートの未清書メモにすでにあります',
+  removed: '取り消しました（英単語ノートの未清書メモから外しました）',
+  elsewhere: '取り消しました。※清書ずみ、または別の端末で入れた分は英単語ノート側で🗑してください'
+};
+function showToast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
 // 削除していない全項目
@@ -2363,13 +2431,21 @@ function vocabItemEl(s, it, { del = true, onChange = renderSongs } = {}) {
       <span class="vi-type ${type}">${TYPE_LABEL[type]}</span>
       <button class="vi-icon" title="読み上げ">🔊</button>
       <button class="vi-icon fav${isFav(k) ? ' on' : ''}" title="お気に入り">${isFav(k) ? '⭐' : '☆'}</button>
+      <button class="vi-icon nb${isSentToVocab(k) ? ' on' : ''}" title="英単語ノートに追加">${isSentToVocab(k) ? '✓単語ノート' : '＋単語ノート'}</button>
       ${del ? '<button class="vi-icon del" title="削除">🗑</button>' : ''}
     </div>
     <div class="vi-ja">${escapeHtml(it.ja)}</div>
     ${it.note ? `<div class="vi-note">${escapeHtml(it.note)}</div>` : ''}
   `;
-  const [btnSpeak, btnFav, btnDel] = el.querySelectorAll('button');
+  const [btnSpeak, btnFav] = el.querySelectorAll('button');
+  const btnNb = el.querySelector('.nb'), btnDel = el.querySelector('.del');
   btnSpeak.onclick = () => speak(it);
+  btnNb.onclick = () => {
+    if (isSentToVocab(k) && !confirm('英単語ノートへの追加を取り消しますか？')) return;
+    showToast(VN_MSG[toggleToVocab(s, it)]);
+    btnNb.classList.toggle('on', isSentToVocab(k));
+    btnNb.textContent = isSentToVocab(k) ? '✓単語ノート' : '＋単語ノート';
+  };
   btnFav.onclick = () => {
     toggleFav(k);
     btnFav.classList.toggle('on', isFav(k));
@@ -2394,7 +2470,7 @@ function vocabPanel(s) {
   const hiddenHere = allVocab(s).filter(it => hiddenVocab.has(vocabKey(s, it)));
   const foot = document.createElement('div');
   foot.className = 'vi-foot';
-  foot.innerHTML = '<span>🔊 読み上げ ／ ☆ お気に入り ／ 🗑 削除</span>';
+  foot.innerHTML = '<span>🔊 読み上げ ／ ☆ お気に入り ／ ＋単語ノート ＝ 英単語ノートに追加 ／ 🗑 削除</span>';
   if (hiddenHere.length) {
     const back = document.createElement('button');
     back.textContent = `削除した${hiddenHere.length}件を戻す`;
@@ -2467,6 +2543,7 @@ async function initVocabSync() {
     };
     mergeBy(U.favs, data.favs, 't');
     mergeBy(U.stats, data.stats, 'last');
+    mergeBy(U.toVocab, data.toVocab, 't');
     saveUser();
     if (listView.hidden) { if (!run) renderTestSetup(); } else { renderViewToggle(); renderSongs(); }
     if (localNewer) vocabSyncPush();
@@ -2479,7 +2556,7 @@ function vocabSyncPush() {
   if (!_vocabSyncDoc) return;
   statsDirty = false;
   _vocabSyncDoc.set({
-    hidden: Array.from(hiddenVocab), favs: U.favs, stats: U.stats,
+    hidden: Array.from(hiddenVocab), favs: U.favs, stats: U.stats, toVocab: U.toVocab,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   }, { merge: true }).catch(e => { statsDirty = true; console.warn('記録の送信に失敗しました', e); });
 }
@@ -3034,6 +3111,51 @@ renderViewToggle();
 renderSongs();
 renderSyncLabel();
 initVocabSync();
+
+/* INBOX:JS:BEGIN */
+/* 未清書メモの受け箱（表現メモ・英単語ノート共通）。正本は .claude/skills_assets/auto-polish/inbox.js → inject.py で配る。
+   setPending() のたびに PendingInbox.push(名前, 一覧) を呼ぶと、この端末の未清書メモを丸ごと
+   reviewLists/{合言葉}__<名前> の dev_<端末ID> に書く（端末ごとに別の欄なので、iPhoneとPCで消し合わない）。
+   Mac の週1回の自動清書（weekly_polish.py）がこれを読み、清書ずみのものは次に開いたとき各端末の一覧から消える。
+   合言葉が無い端末・fetch が無い環境（テストのvm）では何もしない。送れなかったときは次に開いたとき送り直す。 */
+(function (G) {
+  if (G.PendingInbox) return;
+  var KEY = 'AIzaSyASWojYpZ3KJBYG9V30Y4BmplUFORYOelw';
+  var BASE = 'https://firestore.googleapis.com/v1/projects/ai-english-review/databases/(default)/documents/reviewLists/';
+  var timers = {};
+  function ls(k, v) {
+    try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {}
+    return null;
+  }
+  function sid() { var v = ls('aien_sync_id'); return (v && v !== '__none__') ? v : null; }
+  function dev() {
+    var v = ls('aien_dev_id');
+    if (!v) { v = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); ls('aien_dev_id', v); }
+    return v;
+  }
+  function push(name, list) {
+    if (typeof fetch !== 'function') return;
+    var id = sid();
+    if (!id) return;
+    var json = JSON.stringify(list || []);
+    var sentKey = 'inbox_sent_' + name, mark = id + '|' + json;
+    if (ls(sentKey) === mark) return;   /* 送った中身と同じなら送らない */
+    clearTimeout(timers[name]);
+    timers[name] = setTimeout(function () {
+      var d = dev(), f = 'dev_' + d, a = 'at_' + d, body = { fields: {} };
+      body.fields[f] = { stringValue: json };
+      body.fields[a] = { timestampValue: new Date().toISOString() };
+      fetch(BASE + encodeURIComponent(id + '__' + name) + '?updateMask.fieldPaths=' + f
+        + '&updateMask.fieldPaths=' + a + '&key=' + KEY, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+      }).then(function (r) { if (r.ok) ls(sentKey, mark); }).catch(function () {});
+    }, 800);
+  }
+  G.PendingInbox = { push: push };
+})(typeof window !== 'undefined' ? window : this);
+/* INBOX:JS:END */
+// この端末の未清書メモ（英単語ノートと共通）に歌詞から入れたものがあれば、受け箱に送り直す（送れていなかったとき用）
+if (vnPending().some(p => p.src === 'lyrics')) vnSetPending(vnPending());
 </script>
 </body>
 </html>
